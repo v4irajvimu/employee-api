@@ -1,32 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import dummyData from './dummy-data';
+import { InjectModel } from '@nestjs/mongoose';
+import { Employee } from './schema/employee.schema';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class EmployeeService {
-  private dataList = [...dummyData];
+  constructor(
+    @InjectModel(Employee.name)
+    private employeeModel: mongoose.Model<Employee>,
+  ) {}
 
-  create(createEmployeeDto: CreateEmployeeDto) {
-    return createEmployeeDto;
+  async create(createEmployeeDto: CreateEmployeeDto) {
+    try {
+      const newEmployee = await this.employeeModel.create(createEmployeeDto);
+      return newEmployee;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  findAll() {
-    return this.dataList;
+  async findAll() {
+    const employees = await this.employeeModel.find();
+    return employees;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employee`;
+  async findOne(id: string) {
+    try {
+      const employee = await this.employeeModel.findById(id);
+      return employee;
+    } catch (error) {
+      throw new NotFoundException('employee not found!');
+    }
   }
 
-  update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    return {
-      id,
-      ...updateEmployeeDto,
-    };
+  async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
+    try {
+      const employee = await this.employeeModel.findByIdAndUpdate(
+        id,
+        updateEmployeeDto,
+        { new: true, runValidators: true },
+      );
+      return employee;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} employee`;
+  async remove(id: string) {
+    return await this.employeeModel.findByIdAndDelete(id);
   }
 }
