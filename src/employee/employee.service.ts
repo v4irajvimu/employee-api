@@ -3,11 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Query } from 'express-serve-static-core';
+import mongoose from 'mongoose';
+import dummyData from '../dummy-data/dummyData';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { Employee } from './schema/employee.schema';
-import mongoose from 'mongoose';
 
 @Injectable()
 export class EmployeeService {
@@ -25,8 +27,37 @@ export class EmployeeService {
     }
   }
 
-  async findAll() {
-    const employees = await this.employeeModel.find();
+  async feed() {
+    try {
+      const data = await this.employeeModel.insertMany(dummyData);
+      return data;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async findAll(query: Query) {
+    console.log(query);
+    const terms = query.term
+      ? {
+          $or: [
+            {
+              firstName: {
+                $regex: query.term,
+                $options: 'i',
+              },
+            },
+            {
+              lastName: {
+                $regex: query.term,
+                $options: 'i',
+              },
+            },
+          ],
+        }
+      : {};
+
+    const employees = await this.employeeModel.find({ ...terms });
     return employees;
   }
 
@@ -54,5 +85,9 @@ export class EmployeeService {
 
   async remove(id: string) {
     return await this.employeeModel.findByIdAndDelete(id);
+  }
+
+  async removeAll() {
+    return await this.employeeModel.deleteMany({});
   }
 }
