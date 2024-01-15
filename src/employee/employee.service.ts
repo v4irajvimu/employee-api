@@ -57,7 +57,49 @@ export class EmployeeService {
         }
       : {};
 
-    const employees = await this.employeeModel.find({ ...terms });
+    const sortByText = query.sort ?? '';
+    let sortBy = {};
+    if (String(sortByText).split('-').length === 2) {
+      switch (sortByText) {
+        case 'firstName-asc':
+          sortBy = { firstName: 1 };
+          break;
+        case 'firstName-dsc':
+          sortBy = { firstName: -1 };
+          break;
+        case 'lastName-asc':
+          sortBy = { lastName: 1 };
+          break;
+        case 'lastName-dsc':
+          sortBy = { lastName: -1 };
+          break;
+        case 'email-asc':
+          sortBy = { email: 1 };
+          break;
+        case 'email-dsc':
+          sortBy = { email: -1 };
+          break;
+        case 'phoneNumber-dsc':
+          sortBy = { phoneNumber: -1 };
+          break;
+        case 'phoneNumber-asc':
+          sortBy = { phoneNumber: 1 };
+          break;
+        case 'gender-dsc':
+          sortBy = { gender: -1 };
+          break;
+        case 'gender-asc':
+          sortBy = { gender: 1 };
+          break;
+        default:
+          sortBy = { firstName: 1 };
+          break;
+      }
+    }
+
+    const employees = await this.employeeModel
+      .find({ ...terms })
+      .sort({ ...sortBy });
     return employees;
   }
 
