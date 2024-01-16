@@ -24,9 +24,19 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This NestJS project contains the basic CRUD application for employee management. This was created as a coding test for Swivel Tech.
 
-## Installation
+## Getting Start
+
+- Clone the repository from [Github](https://github.com/v4irajvimu/employee-api)
+
+```bash
+$ git clone https://github.com/v4irajvimu/employee-api.git
+```
+
+- Find the .env file from the attached resources folder. particular file is located at folder called back-end. Copy that file to project root.
+
+- Install the dependencies.
 
 ```bash
 $ yarn install
@@ -58,6 +68,8 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
@@ -71,3 +83,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+```
