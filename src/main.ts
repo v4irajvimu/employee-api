@@ -6,10 +6,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get('port');
+  const origin = configService.get('origin');
 
   app.enableCors({
     allowedHeaders: '*',
-    origin: 'http://localhost:3000',
+    origin,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   });
 
